@@ -60,7 +60,7 @@ func (c *RecordingController) Delete() {
     var response models.RecordingResponse
 
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
-        err := models.APIError{"noFilters", "Request aborted because no filters were provided", nil}
+        err := models.APIError{"NoFilters", "Request aborted because no filters were provided", nil}
         errs := []models.APIError{err}
         response = models.RecordingResponse{nil, errs}
     } else {
@@ -84,7 +84,7 @@ func (c *RecordingController) Update() {
     var response models.RecordingResponse
 
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
-        err := models.APIError{"noFilters", "Request aborted because no filters were provided", nil}
+        err := models.APIError{"NoFilters", "Request aborted because no filters were provided", nil}
         errs := []models.APIError{err}
         response = models.RecordingResponse{nil, errs}
     } else {

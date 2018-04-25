@@ -11,7 +11,7 @@ type ErrorController struct {
 }
 
 func (c *ErrorController) Error404() {
-    err := models.APIError{"NotFound", "Method not found", nil}
+    err := models.APIError{"NotFound", "API method not found", nil}
     errs := []models.APIError{err}
     response := models.APIErrorResponse{errs}
 
@@ -20,7 +20,7 @@ func (c *ErrorController) Error404() {
 }
 
 func (c *ErrorController) Error500() {
-    err := models.APIError{"InternalServerError", "Internal server error", nil}
+    err := models.APIError{"ServerError", "Internal server error", nil}
     errs := []models.APIError{err}
     response := models.APIErrorResponse{errs}
 
