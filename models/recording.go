@@ -29,27 +29,32 @@ type Recording struct {
     Published bool   `json:"published"`
 }
 
-func GetAllRecordings(filters *RecordingFilters) map[string]*Recording {
+func GetAllRecordings(filters *RecordingFilters) []*Recording {
+    ret := []*Recording{}
+
     // no filters, return all
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
-        return RecordingList
+        for _, rec := range RecordingList {
+            ret = append(ret, rec)
+        }
+        return ret
     }
 
     // at least one filter selected
-    ret := make(map[string]*Recording)
-    for id, rec := range RecordingList {
+    for _, rec := range RecordingList {
         roomMatches := len(filters.RoomIds) > 0 && utils.StringInSlice(rec.RoomId, filters.RoomIds)
         meetingMatches := len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds)
         if roomMatches || meetingMatches {
-            ret[id] = rec
+            ret = append(ret, rec)
         }
     }
+
     return ret
 }
 
-func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, []APIError) {
+func DeleteAllRecordings(filters *RecordingFilters) ([]*Recording, []APIError) {
     errors := []APIError{}
-    recs := make(map[string]*Recording)
+    recs := []*Recording{}
 
     // no filters, be safe and don't do anything
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
@@ -57,14 +62,14 @@ func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, []AP
     }
 
     // at least one filter selected
-    for id, rec := range GetAllRecordings(nil) {
+    for _, rec := range GetAllRecordings(nil) {
         roomMatches := len(filters.RoomIds) > 0 && utils.StringInSlice(rec.RoomId, filters.RoomIds)
         meetingMatches := len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds)
         if roomMatches || meetingMatches {
             if rec, err := DeleteRecording(rec.MeetingId); err != nil {
                 errors = append(errors, *err)
             } else {
-                recs[id] = rec
+                recs = append(recs, rec)
             }
         }
     }
@@ -72,9 +77,9 @@ func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, []AP
     return recs, errors
 }
 
-func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[string]*Recording, []APIError) {
+func UpdateAllRecordings(filters *RecordingFilters, params *Recording) ([]*Recording, []APIError) {
     errors := []APIError{}
-    recs := make(map[string]*Recording)
+    recs := []*Recording{}
 
     // no filters, be safe and don't do anything
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
@@ -82,14 +87,14 @@ func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[stri
     }
 
     // at least one filter selected
-    for id, rec := range GetAllRecordings(nil) {
+    for _, rec := range GetAllRecordings(nil) {
         roomMatches := len(filters.RoomIds) > 0 && utils.StringInSlice(rec.RoomId, filters.RoomIds)
         meetingMatches := len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds)
         if roomMatches || meetingMatches {
             if rec, err := UpdateRecording(rec.MeetingId, params); err != nil {
                 errors = append(errors, *err)
             } else {
-                recs[id] = rec
+                recs = append(recs, rec)
             }
         }
     }

@@ -13,13 +13,13 @@ type APIError struct {
 
 // A generic API error response
 type APIErrorResponse struct {
-    Errors []APIError          `json:"errors"`
+    Errors []APIError `json:"errors"`
 }
 
 // Default response for recording routes
 type RecordingResponse struct {
-    Data map[string]*Recording `json:"data"`
-    Errors []APIError          `json:"errors"`
+    Data []*Recording `json:"data"`
+    Errors []APIError `json:"errors"`
 }
 
 // Parameters accepted when filtering recordings (used in multiple routes)
