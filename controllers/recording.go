@@ -42,14 +42,10 @@ func (c *RecordingController) Get() {
 	c.ServeJson()
 }
 
-// @Title Get
-// @Description get all Recordings
-// @Success 200 {object} models.Recording
-// @router / [get]
 // @Title Delete Recordings
-// @Description remove one or more Recordings
+// @Description delete one or more Recordings
 // @Success 200 {object} models.Recording
-// @router / [get]
+// @router / [delete]
 func (c *RecordingController) Delete() {
 
 	// parse accepted URL parameters
@@ -57,7 +53,7 @@ func (c *RecordingController) Delete() {
 	roomIds := c.GetStrings("roomId")
 
 	// parse request body
-	var params models.RecordingIndexParams
+	var params models.RecordingDeleteParams
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
 	if err != nil {
 		fmt.Println("Error parsing request body", err)
@@ -72,28 +68,18 @@ func (c *RecordingController) Delete() {
 	}
 
 	// TODO: if there are no filters, return an error
-	errs := models.DeleteAllRecordings(&params.Filters)
+	recs, errs := models.DeleteAllRecordings(&params.Filters)
 
-	if len(errs) > 0 {
-		c.Data["json"] = errs
-	} else {
-		c.Data["json"] = true // TODO: success message
-	}
+	response := models.RecordingResponse{recs, errs}
+	c.Data["json"] = response
 	c.ServeJson()
 }
 
+// @Title Update Recordings
+// @Description update one or more Recordings
+// @Success 200 {object} models.Recording
+// @router / [patch]
 func (c *RecordingController) Update() {
-	// var anyJson map[string]interface{}
-	// err := json.Unmarshal(c.Ctx.Input.RequestBody, &anyJson)
-	// fmt.Println("Parsed", anyJson)
-
-	// meetingIds := make([]string, 0)
-	// var meetingIds string
-	// c.Ctx.Input.Bind(&meetingIds, "meetingId")
-
-	// var body models.RecordingRequestBody
-	// err := c.ParseForm(&body)
-	// fmt.Println("Parsed", body)
 
 	// parse accepted URL parameters
 	meetingIds := c.GetStrings("meetingId")
@@ -102,7 +88,6 @@ func (c *RecordingController) Update() {
 	// parse request body
 	var params models.RecordingUpdateParams
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
-	fmt.Println("Parsed", params)
 	if err != nil {
 		fmt.Println("Error parsing request body", err)
 	}
@@ -115,13 +100,10 @@ func (c *RecordingController) Update() {
 		params.Filters.RoomIds = roomIds
 	}
 
-	c.Data["json"] = params
+	// TODO: if there are no filters, return an error
+	recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
 
-	// result, err2 := models.UpdateAllRecordings(&recording)
-	// if err2 != nil {
-	// 	c.Data["json"] = err
-	// } else {
-	// 	c.Data["json"] = result
-	// }
+	response := models.RecordingResponse{recs, errs}
+	c.Data["json"] = response
 	c.ServeJson()
 }

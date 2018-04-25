@@ -47,42 +47,66 @@ func GetAllRecordings(filters *RecordingFilters) map[string]*Recording {
 	return ret
 }
 
-func DeleteAllRecordings(filters *RecordingFilters) map[string]*error {
-	ret := make(map[string]*error)
+func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, map[string]*error) {
+	errors := make(map[string]*error)
+	recs := make(map[string]*Recording)
 
 	// no filters, be safe and don't do anything
 	if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
-		return ret
+		return recs, errors
 	}
 
 	// at least one filter selected
     for id, rec := range GetAllRecordings(nil) {
         if len(filters.RoomIds) > 0 && utils.StringInSlice(rec.RoomId, filters.RoomIds) {
-			if _, err := DeleteRecording(rec); err != nil {
-				ret[id] = &err
+			if _, err := DeleteRecording(rec.MeetingId); err != nil {
+				errors[id] = &err
+			} else {
+				recs[id] = rec
 			}
 		} else if len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds) {
-			if _, err := DeleteRecording(rec); err != nil {
-				ret[id] = &err
+			if _, err := DeleteRecording(rec.MeetingId); err != nil {
+				errors[id] = &err
+			} else {
+				recs[id] = rec
 			}
 		}
     }
 
-	return ret
+	return recs, errors
 }
 
-func DeleteRecording(rec *Recording) (b bool, err error) {
-	delete(RecordingList, rec.MeetingId)
-	return true, nil
-}
+func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[string]*Recording, map[string]*error) {
+	errors := make(map[string]*error)
+	recs := make(map[string]*Recording)
 
-func UpdateAllRecordings(params *Recording) (a bool, err error) {
-	for _, r := range RecordingList {
-		_, lerr := UpdateRecording(r.MeetingId, params)
-		if lerr != nil {
-			return false, lerr
-		}
+	// no filters, be safe and don't do anything
+	if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
+		return recs, errors
 	}
+
+	// at least one filter selected
+    for id, rec := range GetAllRecordings(nil) {
+        if len(filters.RoomIds) > 0 && utils.StringInSlice(rec.RoomId, filters.RoomIds) {
+			if _, err := UpdateRecording(rec.MeetingId, params); err != nil {
+				errors[id] = &err
+			} else {
+				recs[id] = rec
+			}
+		} else if len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds) {
+			if _, err := UpdateRecording(rec.MeetingId, params); err != nil {
+				errors[id] = &err
+			} else {
+				recs[id] = rec
+			}
+		}
+    }
+
+	return recs, errors
+}
+
+func DeleteRecording(uid string) (b bool, err error) {
+	delete(RecordingList, uid)
 	return true, nil
 }
 
