@@ -1,7 +1,7 @@
 package models
 
 import (
-    "errors"
+    _ "errors"
     "../utils"
     _ "fmt"
     _ "strconv"
@@ -47,8 +47,8 @@ func GetAllRecordings(filters *RecordingFilters) map[string]*Recording {
     return ret
 }
 
-func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, map[string]*error) {
-    errors := make(map[string]*error)
+func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, []APIError) {
+    errors := []APIError{}
     recs := make(map[string]*Recording)
 
     // no filters, be safe and don't do anything
@@ -62,7 +62,7 @@ func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, map[
         meetingMatches := len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds)
         if roomMatches || meetingMatches {
             if rec, err := DeleteRecording(rec.MeetingId); err != nil {
-                errors[id] = &err
+                errors = append(errors, *err)
             } else {
                 recs[id] = rec
             }
@@ -72,8 +72,8 @@ func DeleteAllRecordings(filters *RecordingFilters) (map[string]*Recording, map[
     return recs, errors
 }
 
-func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[string]*Recording, map[string]*error) {
-    errors := make(map[string]*error)
+func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[string]*Recording, []APIError) {
+    errors := []APIError{}
     recs := make(map[string]*Recording)
 
     // no filters, be safe and don't do anything
@@ -87,7 +87,7 @@ func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[stri
         meetingMatches := len(filters.MeetingIds) > 0 && utils.StringInSlice(rec.MeetingId, filters.MeetingIds)
         if roomMatches || meetingMatches {
             if rec, err := UpdateRecording(rec.MeetingId, params); err != nil {
-                errors[id] = &err
+                errors = append(errors, *err)
             } else {
                 recs[id] = rec
             }
@@ -97,13 +97,13 @@ func UpdateAllRecordings(filters *RecordingFilters, params *Recording) (map[stri
     return recs, errors
 }
 
-func DeleteRecording(uid string) (rec *Recording, err error) {
+func DeleteRecording(uid string) (rec *Recording, err *APIError) {
     rec = RecordingList[uid]
     delete(RecordingList, uid)
     return rec, nil
 }
 
-func UpdateRecording(uid string, params *Recording) (a *Recording, err error) {
+func UpdateRecording(uid string, params *Recording) (a *Recording, err *APIError) {
     if r, ok := RecordingList[uid]; ok {
         if params.Name != "" {
             r.Name = params.Name
@@ -113,5 +113,5 @@ func UpdateRecording(uid string, params *Recording) (a *Recording, err error) {
         // }
         return r, nil
     }
-    return nil, errors.New("Recording does not exist")
+    return nil, &APIError{"notFound", "Recording does not exist", &uid}
 }

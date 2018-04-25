@@ -56,13 +56,20 @@ func (c *RecordingController) Get() {
 // @router / [delete]
 func (c *RecordingController) Delete() {
     params := c.ParseParams()
+    filters := &params.Filters
+    var response models.RecordingResponse
 
-    // TODO: if there are no filters, return an error
-    recs, errs := models.DeleteAllRecordings(&params.Filters)
-    if len(recs) == 0 { recs = nil }
-    if len(errs) == 0 { errs = nil }
+    if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
+        err := models.APIError{"noFilters", "Request aborted because no filters were provided", nil}
+        errs := []models.APIError{err}
+        response = models.RecordingResponse{nil, errs}
+    } else {
+        recs, errs := models.DeleteAllRecordings(filters)
+        if len(recs) == 0 { recs = nil }
+        if len(errs) == 0 { errs = nil }
 
-    response := models.RecordingResponse{recs, errs}
+        response = models.RecordingResponse{recs, errs}
+    }
     c.Data["json"] = response
     c.ServeJson()
 }
@@ -73,13 +80,20 @@ func (c *RecordingController) Delete() {
 // @router / [patch]
 func (c *RecordingController) Update() {
     params := c.ParseParams()
+    filters := &params.Filters
+    var response models.RecordingResponse
 
-    // TODO: if there are no filters, return an error
-    recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
-    if len(recs) == 0 { recs = nil }
-    if len(errs) == 0 { errs = nil }
+    if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
+        err := models.APIError{"noFilters", "Request aborted because no filters were provided", nil}
+        errs := []models.APIError{err}
+        response = models.RecordingResponse{nil, errs}
+    } else {
+        recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
+        if len(recs) == 0 { recs = nil }
+        if len(errs) == 0 { errs = nil }
 
-    response := models.RecordingResponse{recs, errs}
+        response = models.RecordingResponse{recs, errs}
+    }
     c.Data["json"] = response
     c.ServeJson()
 }

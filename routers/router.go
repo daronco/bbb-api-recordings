@@ -17,12 +17,4 @@ func init() {
     beego.Router("/recordings",&controllers.RecordingController{},"get:Get")
     beego.Router("/recordings",&controllers.RecordingController{},"delete:Delete")
     beego.Router("/recordings",&controllers.RecordingController{},"patch:Update")
-    // ns := beego.NewNamespace("/",
-    //  beego.NSNamespace("/recording",
-    //      beego.NSInclude(
-    //          &controllers.RecordingController{},
-    //      ),
-    //  ),
-    // )
-    // beego.AddNamespace(ns)
 }
