@@ -8,13 +8,12 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// Operations about Recordings
 type RecordingController struct {
 	beego.Controller
 }
 
-// @Title Get
-// @Description get all Recordings
+// @Title Get Recordings
+// @Description get a list of Recordings
 // @Success 200 {object} models.Recording
 // @router / [get]
 func (c *RecordingController) Get() {
@@ -26,7 +25,6 @@ func (c *RecordingController) Get() {
 	// parse request body
 	var params models.RecordingIndexParams
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
-	// fmt.Println("Parsed", params)
 	if err != nil {
 		fmt.Println("Error parsing request body", err)
 	}
@@ -48,12 +46,38 @@ func (c *RecordingController) Get() {
 // @Description get all Recordings
 // @Success 200 {object} models.Recording
 // @router / [get]
+// @Title Delete Recordings
+// @Description remove one or more Recordings
+// @Success 200 {object} models.Recording
+// @router / [get]
 func (c *RecordingController) Delete() {
-	result, err := models.DeleteAllRecordings()
+
+	// parse accepted URL parameters
+	meetingIds := c.GetStrings("meetingId")
+	roomIds := c.GetStrings("roomId")
+
+	// parse request body
+	var params models.RecordingIndexParams
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
 	if err != nil {
-		c.Data["json"] = err
+		fmt.Println("Error parsing request body", err)
+	}
+
+	// give priority to parameters set in the URL
+	if len(meetingIds) > 0 {
+		params.Filters.MeetingIds = meetingIds
+	}
+	if len(roomIds) > 0 {
+		params.Filters.RoomIds = roomIds
+	}
+
+	// TODO: if there are no filters, return an error
+	errs := models.DeleteAllRecordings(&params.Filters)
+
+	if len(errs) > 0 {
+		c.Data["json"] = errs
 	} else {
-		c.Data["json"] = result
+		c.Data["json"] = true // TODO: success message
 	}
 	c.ServeJson()
 }
