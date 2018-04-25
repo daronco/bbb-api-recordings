@@ -1,39 +1,39 @@
 package controllers
 
 import (
-	"../models"
-	"encoding/json"
-	"fmt"
+    "../models"
+    "encoding/json"
+    "fmt"
 
-	"github.com/astaxie/beego"
+    "github.com/astaxie/beego"
 )
 
 type RecordingController struct {
-	beego.Controller
+    beego.Controller
 }
 
 func (c *RecordingController) ParseParams() *models.RecordingParams {
-	var params models.RecordingParams
+    var params models.RecordingParams
 
-	// parse accepted URL parameters
-	meetingIds := c.GetStrings("meetingId")
-	roomIds := c.GetStrings("roomId")
+    // parse accepted URL parameters
+    meetingIds := c.GetStrings("meetingId")
+    roomIds := c.GetStrings("roomId")
 
-	// parse request body
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
-	if err != nil {
-		fmt.Println("Error parsing request body", err)
-	}
+    // parse request body
+    err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
+    if err != nil {
+        fmt.Println("Error parsing request body", err)
+    }
 
-	// give priority to parameters set in the URL
-	if len(meetingIds) > 0 {
-		params.Filters.MeetingIds = meetingIds
-	}
-	if len(roomIds) > 0 {
-		params.Filters.RoomIds = roomIds
-	}
+    // give priority to parameters set in the URL
+    if len(meetingIds) > 0 {
+        params.Filters.MeetingIds = meetingIds
+    }
+    if len(roomIds) > 0 {
+        params.Filters.RoomIds = roomIds
+    }
 
-	return &params
+    return &params
 }
 
 // @Title Get Recordings
@@ -41,13 +41,13 @@ func (c *RecordingController) ParseParams() *models.RecordingParams {
 // @Success 200 {object} models.Recording
 // @router / [get]
 func (c *RecordingController) Get() {
-	params := c.ParseParams()
-	recs := models.GetAllRecordings(&params.Filters)
-	if len(recs) == 0 { recs = nil }
+    params := c.ParseParams()
+    recs := models.GetAllRecordings(&params.Filters)
+    if len(recs) == 0 { recs = nil }
 
-	response := models.RecordingResponse{recs, nil}
-	c.Data["json"] = response
-	c.ServeJson()
+    response := models.RecordingResponse{recs, nil}
+    c.Data["json"] = response
+    c.ServeJson()
 }
 
 // @Title Delete Recordings
@@ -55,16 +55,16 @@ func (c *RecordingController) Get() {
 // @Success 200 {object} models.Recording
 // @router / [delete]
 func (c *RecordingController) Delete() {
-	params := c.ParseParams()
+    params := c.ParseParams()
 
-	// TODO: if there are no filters, return an error
-	recs, errs := models.DeleteAllRecordings(&params.Filters)
-	if len(recs) == 0 { recs = nil }
-	if len(errs) == 0 { errs = nil }
+    // TODO: if there are no filters, return an error
+    recs, errs := models.DeleteAllRecordings(&params.Filters)
+    if len(recs) == 0 { recs = nil }
+    if len(errs) == 0 { errs = nil }
 
-	response := models.RecordingResponse{recs, errs}
-	c.Data["json"] = response
-	c.ServeJson()
+    response := models.RecordingResponse{recs, errs}
+    c.Data["json"] = response
+    c.ServeJson()
 }
 
 // @Title Update Recordings
@@ -72,14 +72,14 @@ func (c *RecordingController) Delete() {
 // @Success 200 {object} models.Recording
 // @router / [patch]
 func (c *RecordingController) Update() {
-	params := c.ParseParams()
+    params := c.ParseParams()
 
-	// TODO: if there are no filters, return an error
-	recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
-	if len(recs) == 0 { recs = nil }
-	if len(errs) == 0 { errs = nil }
+    // TODO: if there are no filters, return an error
+    recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
+    if len(recs) == 0 { recs = nil }
+    if len(errs) == 0 { errs = nil }
 
-	response := models.RecordingResponse{recs, errs}
-	c.Data["json"] = response
-	c.ServeJson()
+    response := models.RecordingResponse{recs, errs}
+    c.Data["json"] = response
+    c.ServeJson()
 }
