@@ -4,20 +4,10 @@ import (
 	_ "encoding/json"
 )
 
-// Parameters accepted when receiving a request to list recordings
-type RecordingIndexParams struct {
-	Filters RecordingFilters `json:"filters"`
-}
-
-// Parameters accepted when receiving a request to update a recording
-type RecordingUpdateParams struct {
+// Parameters accepted when receiving requests
+type RecordingParams struct {
 	Filters RecordingFilters `json:"filters"`
 	Attributes Recording     `json:"attributes"`
-}
-
-// Parameters accepted when receiving a request to delete recordings
-type RecordingDeleteParams struct {
-	Filters RecordingFilters `json:"filters"`
 }
 
 // Default response
