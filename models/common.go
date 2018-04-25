@@ -11,13 +11,12 @@ type APIError struct {
     Source *string     `json:"source"`
 }
 
-// Parameters accepted when receiving requests
-type RecordingParams struct {
-    Filters RecordingFilters `json:"filters"`
-    Attributes Recording     `json:"attributes"`
+// A generic API error response
+type APIErrorResponse struct {
+    Errors []APIError          `json:"errors"`
 }
 
-// Default response
+// Default response for recording routes
 type RecordingResponse struct {
     Data map[string]*Recording `json:"data"`
     Errors []APIError          `json:"errors"`
@@ -27,4 +26,10 @@ type RecordingResponse struct {
 type RecordingFilters struct {
     MeetingIds []string `json:"meetingId"`
     RoomIds []string    `json:"roomId"`
+}
+
+// Parameters accepted when receiving requests for recordings
+type RecordingParams struct {
+    Filters RecordingFilters `json:"filters"`
+    Attributes Recording     `json:"attributes"`
 }

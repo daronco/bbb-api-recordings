@@ -3,6 +3,7 @@ package main
 import (
     _ "./docs"
     _ "./routers"
+    "./controllers"
 
     "github.com/astaxie/beego"
 )
@@ -12,5 +13,6 @@ func main() {
         beego.DirectoryIndex = true
         beego.StaticDir["/swagger"] = "swagger"
     }
+    beego.ErrorController(&controllers.ErrorController{})
     beego.Run()
 }

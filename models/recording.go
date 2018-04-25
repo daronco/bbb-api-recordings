@@ -113,5 +113,5 @@ func UpdateRecording(uid string, params *Recording) (a *Recording, err *APIError
         // }
         return r, nil
     }
-    return nil, &APIError{"notFound", "Recording does not exist", &uid}
+    return nil, &APIError{"NotFound", "Recording does not exist", &uid}
 }
