@@ -1,6 +1,6 @@
 FROM golang
 
-EXPOSE 8080
+EXPOSE 8081
 
 COPY . /go/src/github.com/bigbluebutton/bbb-api-recordings
 WORKDIR /go/src/github.com/bigbluebutton/bbb-api-recordings
