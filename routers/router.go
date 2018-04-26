@@ -8,7 +8,7 @@
 package routers
 
 import (
-    "../controllers"
+    "github.com/bigbluebutton/bbb-api-recordings/controllers"
 
     "github.com/astaxie/beego"
 )

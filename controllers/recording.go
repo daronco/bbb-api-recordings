@@ -1,9 +1,8 @@
 package controllers
 
 import (
-    "../models"
+    "github.com/bigbluebutton/bbb-api-recordings/models"
     "encoding/json"
-    "fmt"
 
     "github.com/astaxie/beego"
 )
@@ -22,7 +21,7 @@ func (c *RecordingController) ParseParams() *models.RecordingParams {
     // parse request body
     err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
     if err != nil {
-        fmt.Println("Error parsing request body", err)
+        beego.Error("Error parsing request body", err)
     }
 
     // give priority to parameters set in the URL
@@ -47,7 +46,7 @@ func (c *RecordingController) Get() {
 
     response := models.RecordingResponse{recs, nil}
     c.Data["json"] = response
-    c.ServeJson()
+    c.ServeJSON()
 }
 
 // @Title Delete Recordings
@@ -62,6 +61,8 @@ func (c *RecordingController) Delete() {
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
         err := models.APIError{"NoFilters", "Request aborted because no filters were provided", nil}
         errs := []models.APIError{err}
+
+        // TODO: set another status code?
         response = models.RecordingResponse{nil, errs}
     } else {
         recs, errs := models.DeleteAllRecordings(filters)
@@ -71,7 +72,7 @@ func (c *RecordingController) Delete() {
         response = models.RecordingResponse{recs, errs}
     }
     c.Data["json"] = response
-    c.ServeJson()
+    c.ServeJSON()
 }
 
 // @Title Update Recordings
@@ -86,6 +87,8 @@ func (c *RecordingController) Update() {
     if filters == nil || (len(filters.RoomIds) == 0 && len(filters.MeetingIds) == 0) {
         err := models.APIError{"NoFilters", "Request aborted because no filters were provided", nil}
         errs := []models.APIError{err}
+
+        // TODO: set another status code?
         response = models.RecordingResponse{nil, errs}
     } else {
         recs, errs := models.UpdateAllRecordings(&params.Filters, &params.Attributes)
@@ -95,5 +98,5 @@ func (c *RecordingController) Update() {
         response = models.RecordingResponse{recs, errs}
     }
     c.Data["json"] = response
-    c.ServeJson()
+    c.ServeJSON()
 }

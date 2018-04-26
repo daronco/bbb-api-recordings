@@ -1,7 +1,7 @@
 package controllers
 
 import (
-    "../models"
+    "github.com/bigbluebutton/bbb-api-recordings/models"
 
     "github.com/astaxie/beego"
 )
@@ -16,7 +16,7 @@ func (c *ErrorController) Error404() {
     response := models.APIErrorResponse{errs}
 
     c.Data["json"] = response
-    c.ServeJson()
+    c.ServeJSON()
 }
 
 func (c *ErrorController) Error500() {
@@ -25,5 +25,5 @@ func (c *ErrorController) Error500() {
     response := models.APIErrorResponse{errs}
 
     c.Data["json"] = response
-    c.ServeJson()
+    c.ServeJSON()
 }

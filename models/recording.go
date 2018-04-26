@@ -2,10 +2,10 @@ package models
 
 import (
     _ "errors"
-    "../utils"
     _ "fmt"
     _ "strconv"
     _ "time"
+    "github.com/bigbluebutton/bbb-api-recordings/utils"
 )
 
 var (
