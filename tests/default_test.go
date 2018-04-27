@@ -6,7 +6,7 @@ import (
     "testing"
     "runtime"
     "path/filepath"
-    _ "bbb-api-recordings/routers"
+    _ "github.com/bigbluebutton/bbb-api-recordings/routers"
 
     "github.com/astaxie/beego"
     . "github.com/smartystreets/goconvey/convey"
