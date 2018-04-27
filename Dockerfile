@@ -1,6 +1,7 @@
 FROM golang
 
 EXPOSE 8081
+ENV PORT 8081
 
 COPY . /go/src/github.com/bigbluebutton/bbb-api-recordings
 WORKDIR /go/src/github.com/bigbluebutton/bbb-api-recordings

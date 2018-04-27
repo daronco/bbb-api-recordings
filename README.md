@@ -12,6 +12,9 @@ Or do it yourself:
 ```
 docker build -t bigbluebutton/bbb-api-recordings .
 docker run -ti --rm -p 8081:8081 bigbluebutton/bbb-api-recordings
+
+# run in another port
+docker run -ti --rm -p 9000:9000 -e PORT=9000 bigbluebutton/bbb-api-recordings
 ```
 
 Test requests with:
